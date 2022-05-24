@@ -1,32 +1,32 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
-// Testing the routes for logging in here first. We can move them around later
-// const authController = require('./tempRoutes4Testing/tempRoutes')
-// app.use('/users', authController)
 
-const express = require("express"),
-    mongoose = require("mongoose"),
-    User = require("./Models/User-model"),
-    passport = require("passport"),
-    LocalStrategy = require("passport-local"),
-    passportLocalMongoose = require("passport-local-mongoose"),
-    app = express(),
-    path = require("path"),
-    expressPath = require("express-path")
+// Need to change values to process.env
 
-    app.set('view engine', 'ejs')
-      // const routes = []
-    // app.set('views', path.join(__dirname, '/tempRoutes4Testing'));
-    app.use(express.json())
-    app.use(express.urlencoded({ extended: true }))
 
-    app.use(require("express-session")({
-    secret: process.env.REACT_APP_SESSION_SECRET || 'ABHDSAKIWHRHKAJSDNDA',
+const express = require("express")
+const mongoose = require("mongoose")
+const User = require("./Models/User-model")
+const passport = require("passport")
+const LocalStrategy = require("passport-local")
+const passportLocalMongoose = require("passport-local-mongoose")
+const app = express()
+    
+// Connecting to MongoDB
+mongoose.connect("mongodb://localhost:27017/passport", { useNewUrlParser: true })
+.then(conn => console.log(`Mongodb Connected on ${conn.connections[0].name}`))
+
+app.set("view engine","ejs")
+app.use(express.urlencoded({ extended: true }))
+app.use(require("express-session")({
+    secret:"stop keeping the best cookies a secret",
     resave: false,
     saveUninitialized: false
-      }));
-    
+}))
+
+
+//Passport Config
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -35,75 +35,76 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 
-
-
-// Commented out because I don't really know if the routes belong here.
-// I'm not used to this frontend/backend setup
-
-
+//Routes
 app.get("/",function(req, res){
-   res.render("Home.ejs")
+   res.render("home")
 })
 
-app.get("/Home", isLoggedIn, function(req, res){
-    res.render("Secret.ejs");
+app.get("/secret", isLoggedIn, function(req, res){
+    res.render("secret")
+    console.info(res)
 })
 
 app.get("/register", function(req, res){
-    res.render("Register.ejs");
+    res.render("register")
 })
 
-// handling user sign up
+// Handling user sign up
 app.post("/register", function(req, res){
-    // console.log(req.body.username);
-    // console.log(req.body.password);
-    User.create(new User({username: req.body.username}), req.body.password, function(err, user){
+    console.log(req.body)
+   console.log(req.body.username)
+    console.log(req.body.password)
+    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
+            console.log(user,User)
         if(err){
-            console.log(err)
-            return res.render("Register.ejs")
+            console.log(err);
+            return res.render("register")
         }
-        passport.authenticate("local")(req, res, function(){
-            res.redirect("Secret")
-        })
+            return res.render('login')
+        // passport.authenticate("local")(req, res, function(){
+        //     res.redirect("/secret");
+        // })
     })
 })
 
-// // Login Form
+// Login Form
 app.get("/login", function(req, res){
-    res.render("login.ejs")
+    console.info(req,res)
+    res.render("login");
 })
 
-// // Login Logic
-// // middleware
+// Login Middleware
 app.post("/login", passport.authenticate("local",{
     successRedirect: "/secret",
     failureRedirect: "/login"
 }), function(req, res){
-  console.log(req,res)
-    })
+    console.info(User)
+})
 
 // Logout
 app.get("/logout", function(req, res){
+    console.info(req,res)
+
     req.logout()
     res.redirect("/")
-})
+});
 
 // check isLoggedIn
 function isLoggedIn(req, res, next){
+        console.info(req)
+
     if(req.isAuthenticated()){
         return next()
     }
     res.redirect("/login")
-}
-function isLoggedOut(req, res, next){
-    if(!req.isAuthenticated()){return next();}
-    res.redirect("/home")
+    console.info(res)
 }
 
-const port = process.env.PORT || 4000;
+// No need for isNotLoggedIn
 
-app.listen(port, function(){
-    console.log(`P3 backend server running started on ${port}`)
-});
+
+app.listen(4000, () => {
+    console.log("app running on 4000")
+})
 
     
