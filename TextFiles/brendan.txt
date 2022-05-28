@@ -1,0 +1,10 @@
+This is the database string below
+Usernames are Shindano, Brian, Francis
+Passwords are Shindano1, Brian1, Fancis1
+Should be able to just open Mongo compass or mongosh and plug it in
+mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/db-name?retryWrites=true&w=majority
+
+
+
+
+
