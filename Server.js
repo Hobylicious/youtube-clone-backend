@@ -10,17 +10,18 @@ const app = express()
 const cookieParser = require('cookie-parser')
 const path = require('path')
     
-// Connecting to MongoDB
-const mongoose = require("mongoose")
-
 // Everyone is an admin on this cluster right now
 // usernames: Brian, Francis, Shindano 
 // password: Brian1, Francis1, Shindano1
 // MONGO_URI="mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/db-name?retryWrites=true&w=majority"
 
+// Connecting to MongoDB
+const mongoose = require("mongoose")
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 .then(conn => console.log(`Mongodb Connected on ${conn.connections[0].name}`))
 .catch(err => console.error(err))
+
+
         
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -48,16 +49,16 @@ app.use('/api/like', require('./routes/like'))
 // in case it ends up being important. I changed it around to work for
 // our two repos as long as you have them both in the same folder. 
     
-  
-
-
-
-
 const PORT = process.env.PORT || 4001
 
 app.listen(`${PORT}`, () => {
     console.log(`app running on ${PORT}`)
 })
+  
+
+
+
+
 
 
 
