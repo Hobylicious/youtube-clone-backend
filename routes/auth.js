@@ -1,62 +1,45 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('passport');
+const passport = require('passport')
+require('../passport-config')(passport);
 const User = require('../Models/User-model')
 
-//Routes
-router.get("/",function(req, res){
-   res.render("home")
-})
-
-router.get("/secretOrWhereverOurHomePageIs", isLoggedIn, function(req, res){
-    res.render("secretOrWhereverOurHomePageIs")
-})
-
-router.get("/register", function(req, res){
-    res.render("register")
-})
-
-// Handling user sign up
-router.post("/register", function(req, res){
-   console.log(req.body.username)
-    console.log(req.body.password)
-    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
-        if(err){
-            console.log(err);
-            return res.render("register")
-        }
-        // passport.authenticate("local")(req, res, function(){
-            res.redirect("/login")
-        // });
-    });
+// Routes
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err
+    if (!user) res.send("No User Exists");
+    else {
+      req.logIn(user, (err) => {
+        if (err) throw err
+        res.send("Successfully Authenticated")
+        console.log(req.user)
+      })
+    }
+  })(req, res, next)
 });
 
-// Login Form
-router.get("/login", function(req, res){
-    res.render("login")
-})
+router.post("/register", (req, res) => {
+  User.findOne({ username: req.body.username }, async (err, doc) => {
+    if (err) throw err
+    if (doc) res.send("User Already Exists")
+    if (!doc) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-// Login Middleware
-router.post("/login", passport.authenticate("local",{
-    successRedirect: "/home",
-    failureRedirect: "/login"
-}), function(req, res){
-    console.log(User)
-})
-
-// Logout
-router.get("/logout", function(req, res){
-    req.logout()
-    res.redirect("/login")
-})
-
-// check isLoggedIn
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next()
+      const newUser = new User({
+        username: req.body.username,
+        password: hashedPassword,
+      });
+      await newUser.save()
+      res.send("User Created")
     }
-    res.redirect("/login")
-}
+  })
+});
+
+router.get("/user", (req, res) => {
+  res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
+});
+
 
 module.exports = router;
 

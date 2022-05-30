@@ -9,34 +9,36 @@ const app = express()
 const cookieParser = require('cookie-parser')
 const path = require('path')
 const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-const passportLocalMongoose = require('passport-local-mongoose')
-    
+const passportLocal = require('passport-local').Strategy
+const bcrypt = require("bcryptjs")
+const session = require("express-session")
+const cors = require("cors")
+
+// Configure middleware
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(cookieParser("changeToDotENV"))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(
+  cors({
+    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    // We can change when we deploy
+    credentials: true,
+  })
+);
+app.use(
+  session({
+    secret: "changeToDotENV",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 // Everyone is an admin on this cluster right now
 // usernames: Brian, Francis, Shindano 
 // password: Brian1, Francis1, Shindano1
 // MONGO_URI="mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/Accounts?retryWrites=true&w=majority"
-
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(cookieParser())
-
-// Configure passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
-const User = require("./Models/User-model")
-passport.use(new LocalStrategy(User.authenticate()))
-
-// use static serialize and deserialize of model for passport session support
-passport.serializeUser(User.serializeUser())
-passport.deserializeUser(User.deserializeUser())
-
-app.use('/api/auth', require('./routes/auth'))
-app.use('/api/video', require('./routes/video'))
-app.use('/api/comment', require('./routes/comment'))
-app.use('/api/like', require('./routes/like'))
-// app.use('/api/subscribe', require('./routes/subscribe'))
 
 // Connecting to MongoDB
 const mongoose = require("mongoose")
@@ -44,23 +46,15 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 .then(conn => console.log(`Mongodb Connected on ${conn.connections[0].name}`))
 .catch(err => console.error(err))
 
-// I have all subscriber content commented out, no routes for it either yet. 
- // I'm more concerned with getting likes and comments working
+const User = require("./Models/User-model")
+require("./passport-config")(passport);
 
-// if(process.env.NODE_ENV === 'production'){
-//     app.get("*", (req, res) => {
-//         let reactPath = path.join(__dirname,'..','youtube-clone-frontend','public','index.html') 
-//             // console.log(reactPath)
-//             res.sendFile(reactPath)
-//                 console.log(req,res)
-//     })
-// }
+app.use('/api/user', require('./routes/auth'))
+app.use('/api/video', require('./routes/video'))
+app.use('/api/comment', require('./routes/comment'))
+app.use('/api/like', require('./routes/like'))
+// app.use('/api/subscribe', require('./routes/subscribe'))
 
-// ^^ Not sure we need that function. I'm going off a repo from github
-// and it looks like he preloaded static content. I'm going to leave it for now 
-// in case it ends up being important. I changed it around to work for
-// our two repos as long as you have them both in the same folder. 
-    
 const PORT = process.env.PORT || 4001
 
 app.listen(`${PORT}`, () => {
