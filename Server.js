@@ -5,32 +5,44 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const express = require("express")
-const User = require("./Models/User-model")
 const app = express()
 const cookieParser = require('cookie-parser')
 const path = require('path')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const passportLocalMongoose = require('passport-local-mongoose')
     
 // Everyone is an admin on this cluster right now
 // usernames: Brian, Francis, Shindano 
 // password: Brian1, Francis1, Shindano1
-// MONGO_URI="mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/db-name?retryWrites=true&w=majority"
+// MONGO_URI="mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/Accounts?retryWrites=true&w=majority"
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(cookieParser())
+
+// Configure passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+const User = require("./Models/User-model")
+passport.use(new LocalStrategy(User.authenticate()))
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/video', require('./routes/video'))
+app.use('/api/comment', require('./routes/comment'))
+app.use('/api/like', require('./routes/like'))
+// app.use('/api/subscribe', require('./routes/subscribe'))
 
 // Connecting to MongoDB
 const mongoose = require("mongoose")
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
 .then(conn => console.log(`Mongodb Connected on ${conn.connections[0].name}`))
 .catch(err => console.error(err))
-
-
-        
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(cookieParser())
-
-app.use('/api/video', require('./routes/video'))
-app.use('/api/comment', require('./routes/comment'))
-app.use('/api/like', require('./routes/like'))
-// app.use('/api/subscribe', require('./routes/subscribe'))
 
 // I have all subscriber content commented out, no routes for it either yet. 
  // I'm more concerned with getting likes and comments working

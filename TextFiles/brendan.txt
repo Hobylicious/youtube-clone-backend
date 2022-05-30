@@ -2,22 +2,12 @@ This is the database string below
 Usernames are Shindano, Brian, Francis
 Passwords are Shindano1, Brian1, Fancis1
 Should be able to just open Mongo compass or mongosh and plug it in
-mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/db-name?retryWrites=true&w=majority
+mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/Accounts?retryWrites=true&w=majority
 
-Anything auth related is moved to the frontend, it's only a few lines and it doesn't effect anything.
-Auth0 and mongoDB are connected by setting auth0 to use a custom database. So the string above is the
-cluster that they are both connected with and anyone can use as an admin. Passwords are stored hashed.
-
-I need to customize the auth0 universal login page, I'm going to make the logo the photo that's in our readme.
-I also need to work on the userProfile on the frontend, maybe make some forms to change your profile info/picture.
 
 https://github.com/jaewonhimnae/react-youtube-clone
 I've been kind of going off that repo but I had to read about everything he did in mongoose 
-and I think I have an okay understanding of how everything works. I left it out if I didn't understand.
-The code I'm pushing is very similar because this is the only example I could find that used mongoDB
-for a youtube clone backend. Anything I didn't understand I left out, like part of his video routes.
-I also left out subscription for now. 
-
+and I think I have an okay understanding of how everything works.
 
 
 
