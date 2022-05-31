@@ -1,0 +1,16 @@
+This is the database string below
+Usernames are Shindano, Brian, Francis
+Passwords are Shindano1, Brian1, Fancis1
+Should be able to just open Mongo compass or mongosh and plug it in
+mongodb+srv://<username>:<password>@cluster0.zrdag.mongodb.net/Accounts?retryWrites=true&w=majority
+
+
+https://github.com/jaewonhimnae/react-youtube-clone
+I've been kind of going off that repo but I had to read about everything he did in mongoose 
+and I think I have an okay understanding of how everything works.
+
+
+
+
+
+
