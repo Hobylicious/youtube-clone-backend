@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const User = require('./User-model');
 
 
-const commentSchema = mongoose.Schema({
+const commentSchema = new Schema({
     writer: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -22,7 +22,7 @@ const commentSchema = mongoose.Schema({
 
 }, { timestamps: true })
 
-const likeSchema = mongoose.Schema({
+const likeSchema = new Schema({
    userId: {
        type: Schema.Types.ObjectId,
        ref: 'User'
@@ -38,7 +38,7 @@ const likeSchema = mongoose.Schema({
 
 }, { timestamps: true })
 
-const dislikeSchema = mongoose.Schema({
+const dislikeSchema = new Schema({
    userId: {
        type: Schema.Types.ObjectId,
        ref: 'User'
@@ -68,7 +68,7 @@ const dislikeSchema = mongoose.Schema({
 //   { timestamps: true }
 // );
 
-const videoSchema = mongoose.Schema({
+const videoSchema = new Schema({
     writer: {
         type:Schema.Types.ObjectId,
         ref: 'User'
