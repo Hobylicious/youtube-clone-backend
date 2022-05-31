@@ -3,6 +3,10 @@ const router = express.Router();
 
 const { Video } = require("../Models/Features")
 
+// router.get('/getVideos', (req, res) => {
+
+// })
+
 router.get("/getVideos", (req, res) => {
 
     Video.find()
