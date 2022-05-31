@@ -18,8 +18,7 @@ const cors = require("cors")
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser("changeToDotENV"))
-app.use(passport.initialize())
-app.use(passport.session())
+// app.use(cookieParser())
 app.use(
   cors({
     origin: "http://localhost:3000", // <-- location of the react app were connecting to
@@ -34,6 +33,8 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Everyone is an admin on this cluster right now
 // usernames: Brian, Francis, Shindano 
