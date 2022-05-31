@@ -32,12 +32,13 @@ router.post("/register", (req, res) => {
       });
       await newUser.save()
       res.send("User Created")
+      console.log(newUser)
     }
   })
 });
 
 router.get("/user", (req, res) => {
-  res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
+  res.send(req.user); // req.user stores the entire user that has been authenticated inside of it.
 });
 
 

@@ -10,16 +10,16 @@ router.post('/getLikes', (req, res) => {
 
     if(req.body.videoId){
         variable = {videoId: req.body.videoId}
-        console.info(variable)
+        // console.info(variable)
 
     }else {
         variable = {commentId: req.body.commentId}
-        console.info(variable)
+        // console.info(variable)
     }
 
         Like.find(variable)
             .exec((likes,err) => {
-                if(err){return res.status(400).send(err).console.error(err.message)}
+                if(err){return res.status(400).send(err)}
                 return res.status(200).json({success:true, likes})
             })
 })
@@ -29,15 +29,15 @@ router.post('/getDislikes', (req, res) => {
 
     if(req.body.videoId){
         variable = {videoId: req.body.videoId}
-        console.info(variable)
+        // console.info(variable)
     }else {
         variable = {commentId: req.body.commentId}
-        console.info(variable)
+        // console.info(variable)
     }
     
     Dislike.find(variable)
     .exec((disLikes,err) => {
-        if(err){return res.status(400).send(err).console.error(err.message)}
+        if(err){return res.status(400).send(err)}
         return res.status(200).json({success:true,disLikes})
     })
 })
@@ -46,11 +46,11 @@ router.post('/upLike', (req, res) => {
     let variable = {}
     if(req.body.videoId){
         variable = {videoId: req.body.videoId, userId: req.body.userId}
-        console.info(variable)
+        // console.info(variable)
 
     } else {
         variable = {commentId: req.body.commentId, userId: req.body.userId}
-        console.info(variable)
+        // console.info(variable)
     }
 
     const like = new Like(variable)
@@ -62,7 +62,7 @@ router.post('/upLike', (req, res) => {
                 if(err){return res.status(400).json({success:false,err})}
                 else{
                 return res.status(200).json({success:true})
-                    console.info(disLikeResult)
+                    // console.info(disLikeResult)
                 }
             })
         })
@@ -79,10 +79,11 @@ router.post('/unLike', (req, res) => {
     Like.findOneAndDelete(variable)
         .exec((err, result) => {
             if(err){
-            return res.status(400).json({success: false, err})
+            return res.status(400).json({success: false, err}),
+                console.error(err)
             }else{
                 return res.status(200).json({success: true})
-                console.info(result)
+                // console.info(result)
             }
         })
 })
@@ -91,19 +92,20 @@ router.post('/unDislike', (req, res) => {
     let variable = {}
     if(req.body.videoId){
         variable = {videoId: req.body.videoId, userId: req.body.userId}
-        console.info(variable)
+        // console.info(variable)
     } else {
         variable = {commentId: req.body.commentId, userId: req.body.userId}
-        console.info(variable)
+        // console.info(variable)
     }
 
     Dislike.findOneAndDelete(variable)
     .exec((err, result) => {
         if(err){
-            return res.status(400).json({success:false,err})
+            return res.status(400).json({success:false,err}),
+                console.error(err)
         }else {
             return res.status(200).json({success:true})
-            console.info(result)
+            // console.info(result)
         }
     })
 })
@@ -124,7 +126,7 @@ router.post("/upDisLike", (req, res) => {
             .exec((err, likeResult) => {
                 if (err) return res.status(400).json({ success: false, err });
                 res.status(200).json({ success: true })
-                console.info(likeResult)
+                // console.info(likeResult)
             })
     })
 
